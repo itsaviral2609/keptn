@@ -5,7 +5,7 @@ FROM golang:1.18.3-alpine3.16 as builder-base
 
 WORKDIR /go/src/github.com/keptn/keptn/helm-service
 
-# Force the go compiler to use modules 
+# Force the go compiler to use modules
 ENV GO111MODULE=on
 ENV BUILDFLAGS=""
 ENV GOPROXY=https://proxy.golang.org
@@ -28,14 +28,18 @@ ENV GOTESTSUM_FORMAT=testname
 RUN go install gotest.tools/gotestsum@v1.7.0
 CMD gotestsum --no-color=false -- -race -coverprofile=coverage.txt -covermode=atomic -v ./... && mv ./coverage.txt /shared/coverage.txt
 
-FROM builder-base as builder
+FROM --platform=$BUILDPLATFORM builder-base as builder
 
 # `skaffold debug` sets SKAFFOLD_GO_GCFLAGS to disable compiler optimizations
 ARG SKAFFOLD_GO_GCFLAGS
 
+# Target OS and architecture to build against (set automatically)
+ARG TARGETOS
+ARG TARGETARCH
+
 # Build the command inside the container.
 # (You may fetch or manage dependencies here, either manually or with a tool like "godep".)
-RUN GOOS=linux go build -ldflags '-linkmode=external' -gcflags="${SKAFFOLD_GO_GCFLAGS}" -v -o helm-service
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags '-linkmode=external' -gcflags="${SKAFFOLD_GO_GCFLAGS}" -v -o helm-service
 
 # Use a Docker multi-stage build to create a lean production image.
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
