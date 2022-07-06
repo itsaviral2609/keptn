@@ -1,5 +1,8 @@
 name: "Security Scans"
 on:
+  push:
+    branches:
+      - "snyk-checks"
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * 1' # run tests at 1 AM (UTC), every monday (1)
@@ -60,6 +63,8 @@ jobs:
             kubescape-framework: "mitre"
           - tool: "kubescape"
             kubescape-framework: "ARMOBest"
+          - tool: snyk
+            snyk-scanner: "iac"
     steps:
       - name: Set up Go
         if: matrix.tool == 'kubeconform'
@@ -96,6 +101,13 @@ jobs:
           name: kics-results
           path: results.json
 
+      - name: Upload KICS results
+        if: always() && matrix.tool == 'kics'
+        uses: actions/upload-artifact@v3
+        with:
+          name: kics-results
+          path: results.json
+
       - name: Kubeconform Scan
         if: matrix.tool == 'kubeconform'
         run: |
@@ -115,3 +127,17 @@ jobs:
           echo "::endgroup::"
           # Docs on how to configure exceptions: https://hub.armosec.io/docs/exceptions
           kubescape scan framework ${{ matrix.kubescape-framework }} -v -t ${{ env.FAILURE_PERCENTAGE }} --exceptions ./.github/kubescape-config.json ${{ env.CHART_TO_SCAN }}
+
+      - name: Snyk IaC Scan
+        if: matrix.tool == 'snyk' #&& github.event_name == 'schedule'
+        uses: snyk/actions/iac@0.3.0
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: ${{ env.CHART_TO_SCAN }}
+
+      - name: Upload Snyk report to Github Code Scanning
+        if: always() && matrix.tool == 'snyk' #&& github.event_name == 'schedule'
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
