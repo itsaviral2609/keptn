@@ -93,7 +93,7 @@ apiGatewayNginx:
   image:
     registry: "docker.io/nginxinc"           # Container Registry
     repository: "nginx-unprivileged"         # Container Image Name
-    tag: "1.22.0-alpine"                     # Container Tag
+    tag: "1.23.0-alpine"                     # Container Tag
   nodeSelector: {}
   gracePeriod: 60
   preStopHookTime: 20
