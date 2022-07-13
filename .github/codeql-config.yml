@@ -1,0 +1,4 @@
+paths-ignore:
+  - '**/*.spec.ts'
+  - '**/*swagger-ui-bundle.js'
+  - '**/*_test.go'
