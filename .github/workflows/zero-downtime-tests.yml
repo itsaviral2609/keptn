@@ -385,7 +385,8 @@ jobs:
           wait $GOTEST
           if [[ $? -ne 0 ]]; then
             echo "::error::Zero Downtime go test failed - exiting"
-            echo "##[set-output name=FAILED;]$(echo true)"
+            FAILED= true
+            echo "##[set-output name=FAILED;]$(echo ${FAILED})"
             exit 1
           fi
 
