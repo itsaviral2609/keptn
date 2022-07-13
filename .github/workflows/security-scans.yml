@@ -134,6 +134,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
+          command: monitor
           file: ${{ env.CHART_TO_SCAN }}
 
       - name: Upload Snyk report to Github Code Scanning
