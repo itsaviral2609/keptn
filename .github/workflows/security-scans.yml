@@ -126,6 +126,7 @@ jobs:
           kubescape scan framework ${{ matrix.kubescape-framework }} -v -t ${{ env.FAILURE_PERCENTAGE }} --exceptions ./.github/kubescape-config.json ${{ env.CHART_TO_SCAN }}
 
       - name: Get current branch
+        if: matrix.tool == 'snyk'
         run: |
           BRANCH="$(git branch --show-current)"
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
