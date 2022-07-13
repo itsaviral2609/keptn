@@ -499,12 +499,14 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Print Build-Config
+        if: always() && steps.test_zero_downtime.outputs.FAILED == 'true'
         run: |
           echo VERSION=${VERSION}
           echo BRANCH=${BRANCH}
 
       - name: Formulate bug issue on errors
         id: formulate_bug_issue
+        if: always() && steps.test_zero_downtime.outputs.FAILED == 'true'
         env:
           FINAL_TEST_REPORT_FILEPATH_MARKDOWN: ${{ env.FINAL_TEST_REPORT_FILEPATH_MARKDOWN }}
         run: |
