@@ -66,6 +66,12 @@ nats:
   cluster:
     replicas: 3
     name: nats
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
   nats:
     healthcheck:
       startup:
@@ -86,6 +92,8 @@ nats:
   natsbox:
     enabled: false
   reloader:
+    enabled: false
+  exporter:
     enabled: false
 
 apiGatewayNginx:
