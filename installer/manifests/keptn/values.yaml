@@ -68,10 +68,6 @@ nats:
     name: nats
   securityContext:
     runAsNonRoot: true
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
   nats:
     healthcheck:
       startup:
@@ -88,6 +84,12 @@ nats:
         size: 5Gi
         storageDirectory: /data/
         storageClassName: ""
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop:
+          - ALL
 
   natsbox:
     enabled: false
