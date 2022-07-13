@@ -40,6 +40,7 @@ jobs:
           helm template ./ -n keptn --name-template keptn --version ${VERSION} > ${{ env.RENDERED_CHART_FILENAME }}
 
       - name: Upload rendered chart as artifact
+        if: github.event_name == 'schedule'
         uses: actions/upload-artifact@v3
         with:
           name: rendered-helm-chart
@@ -50,7 +51,7 @@ jobs:
     needs: prepare-security-scans
     runs-on: ubuntu-20.04
     env:
-      CHART_TO_SCAN: "scans/scan-tpl.yml"
+      CHART_TO_SCAN: "keptn-installer/scan-tpl.yml"
     strategy:
       fail-fast: false
       matrix:
@@ -83,7 +84,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: rendered-helm-chart
-          path: scans
+          path: keptn-installer
 
       - name: KICS Scan
         if: matrix.tool == 'kics'
@@ -135,7 +136,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: ${{ env.CHART_TO_SCAN }}
-          args: --report
+          args: --report --project-tags=type=helm --target-reference="$(git branch --show-current)"
 
       - name: Upload Snyk report to Github Code Scanning
         if: always() && matrix.tool == 'snyk' #&& github.event_name == 'schedule'
