@@ -1,8 +1,5 @@
 name: "Security Scans"
 on:
-  push:
-    branches:
-      - "snyk-checks"
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * 1' # run tests at 1 AM (UTC), every monday (1)
