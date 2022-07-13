@@ -468,11 +468,6 @@ jobs:
           command: monitor
           args: --severity-threshold=medium --file=${{ matrix.config.working-dir }}Dockerfile
 
-      - name: Upload Snyk report to Github Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk.sarif
-
   calculate-total-runtime:
     name: End-of-Pipeline Metrics
     if: always() && (( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository ) || ( github.event_name == 'push' ))
