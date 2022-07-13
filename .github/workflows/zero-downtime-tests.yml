@@ -385,7 +385,7 @@ jobs:
           wait $GOTEST
           if [[ $? -ne 0 ]]; then
             echo "::error::Zero Downtime go test failed - exiting"
-            echo "##[set-output name=FAILURE;]$(echo true)"
+            echo "##[set-output name=FAILED;]$(echo true)"
             exit 1
           fi
 
@@ -493,7 +493,7 @@ jobs:
   publish-final-test-report:
     name: Finalize tests and create reports
     needs: zd-test
-    if:  steps.test_aggregated.outcome != 'success'  # always run, regardless of the outcome of the last job
+    if:  steps.test_zero_downtime.outputs.FAILED == 'true'  # always run, regardless of the outcome of the last job
     runs-on: ubuntu-20.04
     env:
       BRANCH: ${{ needs.zd-test.outputs.BRANCH }}
