@@ -338,6 +338,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: keptndev/${{ matrix.config.artifact }}:${{ env.VERSION }}
+          command: monitor
           args: --severity-threshold=medium --file=${{ matrix.config.working-dir }}Dockerfile
 
       - name: Upload Snyk report to Github Code Scanning
