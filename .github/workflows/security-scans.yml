@@ -134,7 +134,15 @@ jobs:
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
 
       - name: Snyk IaC Scan
-        if: matrix.tool == 'snyk' #&& github.event_name == 'schedule'
+        if: matrix.tool == 'snyk'
+        uses: snyk/actions/iac@0.3.0
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: ${{ env.CHART_TO_SCAN }}
+
+      - name: Snyk IaC Scan (Scheduled)
+        if: matrix.tool == 'snyk' && github.event_name == 'schedule'
         uses: snyk/actions/iac@0.3.0
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -143,7 +151,7 @@ jobs:
           args: --report --project-tags=type=helm --target-reference="${{ env.BRANCH }}"
 
       - name: Upload Snyk report to Github Code Scanning
-        if: always() && matrix.tool == 'snyk' #&& github.event_name == 'schedule'
+        if: always() && matrix.tool == 'snyk' github.event_name == 'schedule'
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
