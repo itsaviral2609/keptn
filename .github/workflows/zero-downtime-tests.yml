@@ -490,12 +490,6 @@ jobs:
           path: /tmp/uitest.log
           if-no-files-found: error
 
-      - name: Load Build-Config Environment from ./dist/build-config/build-config.env
-        id: load_build_env
-        uses: c-py/action-dotenv-to-setenv@v3
-        with:
-          env-file: ./dist/build-config/build-config.env
-
       - name: Overwrite VERSION String for nightly builds
         if: env.BRANCH == 'master'
         run: |
