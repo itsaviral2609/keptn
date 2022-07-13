@@ -490,41 +490,6 @@ jobs:
           path: /tmp/uitest.log
           if-no-files-found: error
 
-  publish-final-test-report:
-    name: Finalize tests and create reports
-    needs: zd-test
-    if: "${{ steps.test_zero_downtime.outcome }}" != 'success'  # always run, regardless of the outcome of the last job
-    runs-on: ubuntu-20.04
-    env:
-      BRANCH: ${{ needs.zd-test.outputs.BRANCH }}
-      TEST_REPORTS_PATH: "./tmp/"
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Node
-        uses: actions/setup-node@v3.3.0
-        with:
-          node-version: 16
-      - run: npm install ndjson-parse@1.0.4
-
-      - name: Download test reports
-        uses: actions/download-artifact@v3
-        with:
-          name: test-report-json
-          path: ${{ env.TEST_REPORTS_PATH }}
-
-      - name: Download all artifacts from last successful build of specified branch
-        uses: dawidd6/action-download-artifact@v2.21.1
-        with:
-          # Download last successful artifact from a CI build
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: CI.yml
-          run_id: ${{ needs.zd-test.outputs.ARTIFACT_RUN_ID }}
-          name: build-config
-          # directory where to extract artifacts to
-          path: ./dist/build-config
-
       - name: Load Build-Config Environment from ./dist/build-config/build-config.env
         id: load_build_env
         uses: c-py/action-dotenv-to-setenv@v3
