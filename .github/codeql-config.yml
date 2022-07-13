@@ -15,5 +15,5 @@ paths:
   - resource-service
 paths-ignore:
   - '**/*.spec.ts'
-  - '**/*swagger-ui-bundle.js'
+  - '**/swagger-ui/*'
   - '**/*_test.go'
