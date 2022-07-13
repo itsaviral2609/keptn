@@ -151,7 +151,7 @@ jobs:
           args: --report --project-tags=type=helm --target-reference="${{ env.BRANCH }}"
 
       - name: Upload Snyk report to Github Code Scanning
-        if: always() && matrix.tool == 'snyk' github.event_name == 'schedule'
+        if: always() && matrix.tool == 'snyk' && github.event_name == 'schedule'
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
